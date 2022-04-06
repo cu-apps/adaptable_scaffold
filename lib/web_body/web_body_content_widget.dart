@@ -1,5 +1,5 @@
 import 'package:adaptable_scaffold/adaptable_scaffold.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class WebBodyContentWidget extends StatelessWidget {
   const WebBodyContentWidget(
@@ -11,7 +11,6 @@ class WebBodyContentWidget extends StatelessWidget {
       Key? key})
       : super(key: key);
 
-// TODO: Handle overlay widget
   final NavigationItem navItem;
   final Widget? overlayWidget;
   final double maxWidth;
@@ -22,36 +21,59 @@ class WebBodyContentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      var column = ConstrainedBox(
+      Widget page = navItem.page ?? Container();
+      Widget column = ConstrainedBox(
           constraints: BoxConstraints(maxWidth: maxWidth),
           child: Column(
             children: [
               if (!shouldShowAppStyleNav)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-                  child: (headerBuilder != null)
-                      ? headerBuilder!(navItem.title)
-                      : Text(navItem.title,
-                          style: const TextStyle(fontSize: 50)),
-                ),
-              navItem.page ?? Container()
+                (headerBuilder != null)
+                    ? headerBuilder!(navItem.title)
+                    : DefaultWebBodyPageHeader(navItem.title),
+              (navItem.shouldScroll) ? page : Expanded(child: page)
             ],
           ));
+      Widget bodyBackground;
       if (navItem.shouldScroll) {
-        return Align(
+        bodyBackground = Align(
             alignment: Alignment.topCenter,
             child: SingleChildScrollView(child: column));
       } else {
         if (navItem.isFullScreen) {
-          return Align(
+          bodyBackground = Align(
               alignment: Alignment.topCenter,
               child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxWidth),
                   child: navItem.page ?? Container()));
         } else {
-          return Align(alignment: Alignment.topCenter, child: column);
+          bodyBackground = Align(alignment: Alignment.topCenter, child: column);
         }
       }
+      return Stack(children: [
+        bodyBackground,
+        if (overlayWidget != null) overlayWidget!,
+      ]);
     });
+  }
+}
+
+class DefaultWebBodyPageHeader extends StatelessWidget {
+  const DefaultWebBodyPageHeader(this.title, {Key? key}) : super(key: key);
+  final String title;
+
+  static double padding = 20;
+  static double fontSize = 50;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(padding),
+      child: Text(
+        title,
+        style: TextStyle(
+            fontSize: fontSize, color: Theme.of(context).primaryColor),
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 }

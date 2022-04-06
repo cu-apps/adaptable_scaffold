@@ -14,11 +14,13 @@ class AdaptableScaffold extends StatefulWidget {
       {this.pageIndex = 0,
       this.onNavigationItemPressed,
       this.navigationItems = const [],
+      this.bodyNavItem,
       this.showNavOnlyOnWeb = false,
       this.preferredWidth = 500,
       this.maxContentWidth = 600,
       this.webButtonWidth = 180,
       this.largeViewWidthThreshold = 800,
+      this.appBarTitleActions,
       this.webBodyLayoutBuilder,
       required this.tabBarMoreBuilder,
       this.webHeadingBuilder,
@@ -33,11 +35,13 @@ class AdaptableScaffold extends StatefulWidget {
   final int pageIndex;
   final Function(int)? onNavigationItemPressed;
   final List<NavigationItem> navigationItems;
+  final NavigationItem? bodyNavItem;
   final bool showNavOnlyOnWeb;
   final double preferredWidth;
   final double maxContentWidth;
   final double webButtonWidth;
   final double largeViewWidthThreshold;
+  final List<Widget>? appBarTitleActions;
 
   // All navigation items, how many nav items are shown in standard view already, hideTabBarCallback, onNavigationItemPressed
   final Widget Function(List<NavigationItem>, int, Function, Function(int)?)
@@ -58,16 +62,19 @@ class AdaptableScaffold extends StatefulWidget {
       bool shouldShowAppStyleNav)? webBodyLayoutBuilder;
   final int maxAppTabsVisible;
   final Widget? overlayWidget;
+
+  // title, actions, leadingWidget
   final PreferredSizeWidget Function(String, List<Widget>?, Widget?)?
       appBarBuilder;
 
-  // title, actions, leadingWidget, navItems, navItemPressed, numberOfVisibleTabsChanged, buttonWidth, buttonBuilder
+  // title, actions, leadingWidget, navItems, navItemPressed, moreTabItemPressed, numberOfVisibleTabsChanged, buttonWidth, buttonBuilder
   final PreferredSizeWidget Function(
       String,
       List<Widget>?,
       Widget?,
       List<NavigationItem>,
       Function(int)?,
+      Function,
       Function(int)?,
       double,
       Widget Function(String, double))? webBarBuilder;
@@ -82,22 +89,25 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
 
   void _setNumberOfTabs(int numOfTabs) {
     _numberOfTabsVisible = numOfTabs;
-    print(_numberOfTabsVisible);
   }
 
   NavigationItem get currentNavigationItem {
-    return (_shouldShowMorePage)
-        ? NavigationItem(
-            icon: Icon(Icons.more_horiz),
-            label: "More",
-            title: "More",
-            page: widget.tabBarMoreBuilder(
-                widget.navigationItems, _numberOfTabsVisible, () {
-              setState(() {
-                _shouldShowMorePage = false;
-              });
-            }, widget.onNavigationItemPressed))
-        : widget.navigationItems[widget.pageIndex];
+    if (widget.bodyNavItem != null) {
+      return widget.bodyNavItem!;
+    } else {
+      return (_shouldShowMorePage)
+          ? NavigationItem(
+              icon: const Icon(Icons.more_horiz),
+              label: "More",
+              title: "More",
+              page: widget.tabBarMoreBuilder(
+                  widget.navigationItems, _numberOfTabsVisible, () {
+                setState(() {
+                  _shouldShowMorePage = false;
+                });
+              }, widget.onNavigationItemPressed))
+          : widget.navigationItems[widget.pageIndex];
+    }
   }
 
   int _getNumberOfAppTabsVisible() {
@@ -123,11 +133,14 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
             navItems: widget.navigationItems,
             context: context),
         body: _getBody(shouldShowAppStyleNav, context, constraints),
-        bottomNavigationBar: (shouldShowAppStyleNav && !widget.showNavOnlyOnWeb)
+        bottomNavigationBar: (shouldShowAppStyleNav &&
+                !widget.showNavOnlyOnWeb &&
+                widget.navigationItems.length > 1)
             ? BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
-                currentIndex:
-                    min(widget.pageIndex, widget.maxAppTabsVisible - 1),
+                currentIndex: (_shouldShowMorePage)
+                    ? widget.maxAppTabsVisible - 1
+                    : min(widget.pageIndex, widget.maxAppTabsVisible - 1),
                 selectedItemColor: Theme.of(context).primaryColor,
                 items: _getBottomNavigationBarItems(),
                 onTap: (index) {
@@ -180,18 +193,18 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
                 Positioned(
                   right: 0,
                   child: Container(
-                    padding: EdgeInsets.all(1),
+                    padding: const EdgeInsets.all(1),
                     decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    constraints: BoxConstraints(
+                    constraints: const BoxConstraints(
                       minWidth: 12,
                       minHeight: 12,
                     ),
                     child: Text(
                       e.badgeCounter.toString(),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
                       ),
@@ -268,7 +281,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
         return (widget.appBarBuilder == null)
             ? DefaultAppStyleBar(
                 title: currentNavigationItem.title,
-                actions: currentNavigationItem.appBarTitleActions ?? [],
+                actions: (currentNavigationItem.appBarTitleActions ?? []) +
+                    (widget.appBarTitleActions ?? []),
                 leadingWidget: currentNavigationItem.appBarLeadingWidget)
             : widget.appBarBuilder!(
                 currentNavigationItem.title,
@@ -280,7 +294,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
       return (widget.webBarBuilder == null)
           ? DefaultWebStyleBar(
               title: currentNavigationItem.title,
-              actions: currentNavigationItem.appBarTitleActions ?? [],
+              actions: (currentNavigationItem.appBarTitleActions ?? []) +
+                  (widget.appBarTitleActions ?? []),
               buttonWidth: widget.webButtonWidth,
               navigationItems: navItems,
               onTabBarItemTapped: (index) {
@@ -293,11 +308,7 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
                 }
               },
               numberOfVisibleTabBarsChanged: _setNumberOfTabs,
-              moreTabItemPressed: () {
-                setState(() {
-                  _shouldShowMorePage = true;
-                });
-              },
+              moreTabItemPressed: _showMorePage,
             )
           : widget.webBarBuilder!(
               currentNavigationItem.title,
@@ -305,6 +316,7 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
               currentNavigationItem.appBarLeadingWidget,
               navItems,
               widget.onNavigationItemPressed,
+              _showMorePage,
               _setNumberOfTabs,
               widget.webButtonWidth,
               widget.webButtonBuilder ??
@@ -319,6 +331,12 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
     }
   }
 
+  void _showMorePage() {
+    setState(() {
+      _shouldShowMorePage = true;
+    });
+  }
+
   bool _getShouldShowAppStyleNav({required double maxWidth}) {
     return !kIsWeb || maxWidth < widget.largeViewWidthThreshold;
   }
@@ -326,8 +344,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
 
 class NavigationItem {
   NavigationItem(
-      {required this.icon,
-      required this.label,
+      {this.icon,
+      this.label,
       required this.title,
       this.page,
       this.urlToOpen,
@@ -336,8 +354,8 @@ class NavigationItem {
       this.badgeCounter,
       this.appBarTitleActions,
       this.appBarLeadingWidget});
-  final Icon icon;
-  final String label;
+  final Icon? icon;
+  final String? label;
   final String title;
   final Widget? page;
   final String? urlToOpen;

@@ -9,11 +9,11 @@ class TabBarMorePage extends StatelessWidget {
   final Function(int)? onNavigationItemPressed;
   final Function hideTabBar;
 
-  Widget getMenuItem(Icon leadingIcon, String title, Widget? pageToNavigateTo,
+  Widget getMenuItem(Icon? leadingIcon, String title, Widget? pageToNavigateTo,
       bool bodyShouldScroll, BuildContext context, int index) {
     return Card(
       child: ListTile(
-        leading: Icon(leadingIcon.icon),
+        leading: (leadingIcon?.icon != null) ? Icon(leadingIcon!.icon) : null,
         title: Text(title),
         onTap: () {
           if (onNavigationItemPressed != null) {
@@ -65,7 +65,7 @@ class TabBarMorePage extends StatelessWidget {
         child: Column(
             children: navItemsToShow
                 .mapIndexed((index, element) => getMenuItem(
-                element.icon, element.label, element.page, element.shouldScroll, context, index + numberOfTabsVisible))
+                element.icon, element.title, element.page, element.shouldScroll, context, index + numberOfTabsVisible))
                 .toList()),
       ),
     );

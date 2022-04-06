@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:adaptable_scaffold/default_app_bars/default_web_bar_button.dart';
 import 'package:flutter/material.dart';
 import 'package:adaptable_scaffold/adaptable_scaffold.dart';
@@ -13,7 +12,9 @@ class DefaultWebStyleBar extends StatefulWidget implements PreferredSizeWidget {
       required this.moreTabItemPressed,
       required this.numberOfVisibleTabBarsChanged,
       this.buttonWidth = 180,
-      this.buttonBuilder});
+      this.buttonBuilder,
+      Key? key})
+      : super(key: key);
   final String? title;
   final List<Widget> actions;
   final List<NavigationItem> navigationItems;
@@ -33,9 +34,9 @@ class DefaultWebStyleBar extends StatefulWidget implements PreferredSizeWidget {
 class _DefaultWebStyleBarState extends State<DefaultWebStyleBar> {
   int _numberOfVisibleTabBars = 0;
 
-  _menuButtonPressed(String label) {
+  _menuButtonPressed(String title) {
     widget.onTabBarItemTapped(
-        widget.navigationItems.indexWhere((element) => element.label == label));
+        widget.navigationItems.indexWhere((element) => element.title == title));
   }
 
   List<Widget> _getMenuButtons(
@@ -44,12 +45,12 @@ class _DefaultWebStyleBarState extends State<DefaultWebStyleBar> {
         .map((element) => ((widget.buttonBuilder == null)
             ? DefaultWebBarButton(
                 padding: const EdgeInsets.all(10),
-                title: element.label,
+                title: element.title,
                 onPressed: () {
                   if (element.label == "More") {
                     widget.moreTabItemPressed();
                   } else {
-                    _menuButtonPressed(element.label);
+                    _menuButtonPressed(element.title);
                   }
                 },
                 textColor: Colors.grey[800],
@@ -57,12 +58,12 @@ class _DefaultWebStyleBarState extends State<DefaultWebStyleBar> {
                 fixedWidth: widget.buttonWidth,
               )
             : GestureDetector(
-                child: widget.buttonBuilder!(element.label, widget.buttonWidth),
+                child: widget.buttonBuilder!(element.title, widget.buttonWidth),
                 onTap: () {
                   if (element.label == "More") {
                     widget.moreTabItemPressed();
                   } else {
-                    _menuButtonPressed(element.label);
+                    _menuButtonPressed(element.title);
                   }
                 },
               )))
@@ -89,7 +90,7 @@ class _DefaultWebStyleBarState extends State<DefaultWebStyleBar> {
   }
 
   int _getNumberOfVisibleTabBars(int noOfButtons, int noOfNavItems) {
-    int noOfVisibleTabBars = 0;
+    int noOfVisibleTabBars;
     if (noOfButtons < noOfNavItems) {
       noOfVisibleTabBars = noOfButtons - 1;
     } else {

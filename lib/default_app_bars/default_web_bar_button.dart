@@ -29,25 +29,24 @@ class DefaultWebBarButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: fixedWidth,
-      child: Padding(
-        padding: padding,
-        child: TextButton(
-          onPressed: onPressed,
-          style: ButtonStyle(
-            overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-              if (states.contains(MaterialState.hovered)) return hoverColor;
-              return null; // Use the default value.
-            }),
-          ),
-          child: Container(
-            child: Text(title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: fontWeight,
-                    color:
-                        textColor ?? Theme.of(context).secondaryHeaderColor)),
+      child: TextButton(
+        onPressed: onPressed,
+        style: ButtonStyle(
+          overlayColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            if (states.contains(MaterialState.hovered)) return hoverColor;
+            return null; // Use the default value.
+          }),
+        ),
+        child: Padding(
+          padding: padding,
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+                color: textColor ?? Theme.of(context).secondaryHeaderColor),
           ),
         ),
       ),
