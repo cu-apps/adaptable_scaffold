@@ -286,7 +286,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
                 leadingWidget: currentNavigationItem.appBarLeadingWidget)
             : widget.appBarBuilder!(
                 currentNavigationItem.title,
-                currentNavigationItem.appBarTitleActions,
+          (currentNavigationItem.appBarTitleActions ?? []) +
+              (widget.appBarTitleActions ?? []),
                 currentNavigationItem.appBarLeadingWidget,
               );
       }
@@ -312,7 +313,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
             )
           : widget.webBarBuilder!(
               currentNavigationItem.title,
-              currentNavigationItem.appBarTitleActions,
+          (currentNavigationItem.appBarTitleActions ?? []) +
+              (widget.appBarTitleActions ?? []),
               currentNavigationItem.appBarLeadingWidget,
               navItems,
               widget.onNavigationItemPressed,
