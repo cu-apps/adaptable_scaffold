@@ -64,7 +64,7 @@ class AdaptableScaffold extends StatefulWidget {
   final Widget? overlayWidget;
 
   // title, actions, leadingWidget
-  final PreferredSizeWidget Function(String, List<Widget>?, Widget?)?
+  final PreferredSizeWidget? Function(String, List<Widget>?, Widget?)?
       appBarBuilder;
 
   // title, actions, leadingWidget, navItems, navItemPressed, moreTabItemPressed, numberOfVisibleTabsChanged, buttonWidth, buttonBuilder
@@ -292,6 +292,9 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
               );
       }
     } else {
+      if (navItems.length < 2) {
+        return null;
+      }
       return (widget.webBarBuilder == null)
           ? DefaultWebStyleBar(
               title: currentNavigationItem.title,
