@@ -26,10 +26,7 @@ class WebBodyContentWidget extends StatelessWidget {
           constraints: BoxConstraints(maxWidth: maxWidth),
           child: Column(
             children: [
-              if (!shouldShowAppStyleNav)
-                (headerBuilder != null)
-                    ? headerBuilder!(navItem.title)
-                    : DefaultWebBodyPageHeader(navItem.title),
+              _getHeader(),
               (navItem.shouldScroll) ? page : Expanded(child: page)
             ],
           ));
@@ -55,6 +52,17 @@ class WebBodyContentWidget extends StatelessWidget {
       ]);
     });
   }
+
+  Widget _getHeader() {
+    if (shouldShowAppStyleNav || navItem.title.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    if (headerBuilder == null) {
+      return DefaultWebBodyPageHeader(navItem.title);
+    } else {
+      return headerBuilder!(navItem.title);
+    }
+  }
 }
 
 class DefaultWebBodyPageHeader extends StatelessWidget {
@@ -66,6 +74,9 @@ class DefaultWebBodyPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (title.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return Padding(
       padding: EdgeInsets.all(padding),
       child: Text(
