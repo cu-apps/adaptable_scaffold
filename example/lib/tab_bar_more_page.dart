@@ -1,9 +1,11 @@
 import 'package:adaptable_scaffold/adaptable_scaffold.dart';
-import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 
 class TabBarMorePage extends StatelessWidget {
-  const TabBarMorePage(this.navigationItems, this.numberOfTabsVisible, this.onNavigationItemPressed, this.hideTabBar);
+  const TabBarMorePage(this.navigationItems, this.numberOfTabsVisible,
+      this.onNavigationItemPressed, this.hideTabBar,
+      {super.key});
   final List<NavigationItem> navigationItems;
   final int numberOfTabsVisible;
   final Function(int)? onNavigationItemPressed;
@@ -55,7 +57,8 @@ class TabBarMorePage extends StatelessWidget {
     // );
   }
 
-  List<NavigationItem> get navItemsToShow => navigationItems.sublist(numberOfTabsVisible);
+  List<NavigationItem> get navItemsToShow =>
+      navigationItems.sublist(numberOfTabsVisible);
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +68,12 @@ class TabBarMorePage extends StatelessWidget {
         child: Column(
             children: navItemsToShow
                 .mapIndexed((index, element) => getMenuItem(
-                element.icon, element.title, element.page, element.shouldScroll, context, index + numberOfTabsVisible))
+                    element.icon,
+                    element.title,
+                    element.page,
+                    element.shouldScroll,
+                    context,
+                    index + numberOfTabsVisible))
                 .toList()),
       ),
     );
