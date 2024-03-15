@@ -10,8 +10,7 @@ class CustomWebBody extends StatelessWidget {
       required this.shouldShowAppStyleNav,
       this.headerBuilder,
       required this.preferredWidth,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final NavigationItem navItem;
   final Widget? overlayWidget;

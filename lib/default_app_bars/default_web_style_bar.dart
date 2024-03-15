@@ -14,8 +14,7 @@ class DefaultWebStyleBar extends StatefulWidget implements PreferredSizeWidget {
       required this.numberOfVisibleTabBarsChanged,
       this.buttonWidth = 180,
       this.buttonBuilder,
-      Key? key})
-      : super(key: key);
+      super.key});
   final String? title;
   final List<Widget> actions;
   final List<NavigationItem> navigationItems;

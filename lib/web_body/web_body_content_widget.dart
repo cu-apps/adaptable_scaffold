@@ -8,8 +8,7 @@ class WebBodyContentWidget extends StatelessWidget {
       required this.maxWidth,
       required this.shouldShowAppStyleNav,
       this.headerBuilder,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final NavigationItem navItem;
   final Widget? overlayWidget;
@@ -66,7 +65,7 @@ class WebBodyContentWidget extends StatelessWidget {
 }
 
 class DefaultWebBodyPageHeader extends StatelessWidget {
-  const DefaultWebBodyPageHeader(this.title, {Key? key}) : super(key: key);
+  const DefaultWebBodyPageHeader(this.title, {super.key});
   final String title;
 
   static double padding = 20;

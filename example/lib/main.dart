@@ -9,7 +9,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
   final String title;
 
   @override
@@ -122,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class LongPage extends StatelessWidget {
-  const LongPage(this.color, {Key? key}) : super(key: key);
+  const LongPage(this.color, {super.key});
 
   final Color color;
 
@@ -166,9 +166,9 @@ class LongPage extends StatelessWidget {
                                     )
                                 ],
                               ),
-                              trailing: Column(
+                              trailing: const Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   Icon(
                                     Icons.arrow_forward_ios,
                                     color: Colors.white,
@@ -183,7 +183,7 @@ class LongPage extends StatelessWidget {
 }
 
 class ShortPage extends StatelessWidget {
-  const ShortPage(this.color, {Key? key}) : super(key: key);
+  const ShortPage(this.color, {super.key});
 
   final Color color;
 
@@ -227,9 +227,9 @@ class ShortPage extends StatelessWidget {
                                     )
                                 ],
                               ),
-                              trailing: Column(
+                              trailing: const Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   Icon(
                                     Icons.arrow_forward_ios,
                                     color: Colors.white,
