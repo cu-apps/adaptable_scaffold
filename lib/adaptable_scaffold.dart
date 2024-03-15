@@ -29,8 +29,7 @@ class AdaptableScaffold extends StatefulWidget {
       this.appBarBuilder,
       this.webBarBuilder,
       this.overlayWidget,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final int pageIndex;
   final Function(int)? onNavigationItemPressed;
@@ -184,35 +183,9 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
   List<BottomNavigationBarItem> _getBottomNavigationBarItems() {
     return _getTabBarNavItems()
         .map((e) => BottomNavigationBarItem(
-            icon: Stack(children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                child: e.icon,
-              ),
-              if (e.badgeCounter != null && e.badgeCounter != 0)
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 12,
-                      minHeight: 12,
-                    ),
-                    child: Text(
-                      e.badgeCounter.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
-            ]),
+            icon: e.badgeCounter != null && e.badgeCounter != 0
+                ? Badge.count(count: e.badgeCounter!, child: e.icon)
+                : e.icon!,
             label: e.label))
         .toList();
   }
