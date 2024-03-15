@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class DefaultAppStyleBar extends StatelessWidget
     implements PreferredSizeWidget {
   const DefaultAppStyleBar(
-      {Key? key, this.title, this.actions = const [], this.leadingWidget})
-      : super(key: key);
+      {super.key, this.title, this.actions = const [], this.leadingWidget});
   final String? title;
   final List<Widget> actions;
   final Widget? leadingWidget;

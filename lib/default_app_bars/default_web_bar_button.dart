@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DefaultWebBarButton extends StatelessWidget {
   const DefaultWebBarButton(
-      {Key? key,
+      {super.key,
       required this.title,
       this.onPressed,
       this.fontSize = 18,
@@ -12,8 +12,7 @@ class DefaultWebBarButton extends StatelessWidget {
       this.textColor = Colors.white,
       this.hoverColor,
       this.fontWeight = FontWeight.w700,
-      this.padding = const EdgeInsets.all(0)})
-      : super(key: key);
+      this.padding = const EdgeInsets.all(0)});
   final String title;
   final double width;
   final VoidCallback? onPressed;

@@ -1,7 +1,8 @@
 import 'dart:math';
+
+import 'package:adaptable_scaffold/adaptable_scaffold.dart';
 import 'package:adaptable_scaffold/default_app_bars/default_web_bar_button.dart';
 import 'package:flutter/material.dart';
-import 'package:adaptable_scaffold/adaptable_scaffold.dart';
 
 class DefaultWebStyleBar extends StatefulWidget implements PreferredSizeWidget {
   const DefaultWebStyleBar(
@@ -13,8 +14,7 @@ class DefaultWebStyleBar extends StatefulWidget implements PreferredSizeWidget {
       required this.numberOfVisibleTabBarsChanged,
       this.buttonWidth = 180,
       this.buttonBuilder,
-      Key? key})
-      : super(key: key);
+      super.key});
   final String? title;
   final List<Widget> actions;
   final List<NavigationItem> navigationItems;
@@ -123,8 +123,8 @@ class _DefaultWebStyleBarState extends State<DefaultWebStyleBar> {
         navItemsToShow = navigationItems;
       }
       return Row(
-          children: _getMenuButtons(navItemsToShow, context),
-          mainAxisSize: MainAxisSize.min);
+          mainAxisSize: MainAxisSize.min,
+          children: _getMenuButtons(navItemsToShow, context));
     });
   }
 }

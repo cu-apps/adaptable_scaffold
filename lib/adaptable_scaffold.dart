@@ -6,8 +6,8 @@ import 'package:adaptable_scaffold/default_app_bars/default_app_style_bar.dart';
 import 'package:adaptable_scaffold/default_app_bars/default_web_bar_button.dart';
 import 'package:adaptable_scaffold/default_app_bars/default_web_style_bar.dart';
 import 'package:adaptable_scaffold/default_web_body/default_web_body.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 
 class AdaptableScaffold extends StatefulWidget {
   const AdaptableScaffold(
@@ -29,8 +29,7 @@ class AdaptableScaffold extends StatefulWidget {
       this.appBarBuilder,
       this.webBarBuilder,
       this.overlayWidget,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final int pageIndex;
   final Function(int)? onNavigationItemPressed;
@@ -170,7 +169,7 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
       var listItems =
           widget.navigationItems.sublist(0, widget.maxAppTabsVisible - 1);
       listItems.add(NavigationItem(
-          icon: Icon(Icons.more_horiz),
+          icon: const Icon(Icons.more_horiz),
           label: 'More',
           title: 'More',
           badgeCounter: widget.navigationItems
@@ -184,35 +183,9 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
   List<BottomNavigationBarItem> _getBottomNavigationBarItems() {
     return _getTabBarNavItems()
         .map((e) => BottomNavigationBarItem(
-            icon: Stack(children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                child: e.icon,
-              ),
-              if (e.badgeCounter != null && e.badgeCounter != 0)
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 12,
-                      minHeight: 12,
-                    ),
-                    child: Text(
-                      e.badgeCounter.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
-            ]),
+            icon: e.badgeCounter != null && e.badgeCounter != 0
+                ? Badge.count(count: e.badgeCounter!, child: e.icon)
+                : e.icon!,
             label: e.label))
         .toList();
   }
@@ -226,11 +199,11 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
 
   Widget _getAppBody(BuildContext context) {
     Widget bodyWithKeyboardDismissal = GestureDetector(
-      child: currentNavigationItem.page ?? Container(),
       behavior: HitTestBehavior.opaque,
       onTap: () {
         FocusScope.of(context).unfocus();
       },
+      child: currentNavigationItem.page ?? Container(),
     );
 
     if (currentNavigationItem.shouldScroll) {
@@ -286,8 +259,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
                 leadingWidget: currentNavigationItem.appBarLeadingWidget)
             : widget.appBarBuilder!(
                 currentNavigationItem.title,
-          (currentNavigationItem.appBarTitleActions ?? []) +
-              (widget.appBarTitleActions ?? []),
+                (currentNavigationItem.appBarTitleActions ?? []) +
+                    (widget.appBarTitleActions ?? []),
                 currentNavigationItem.appBarLeadingWidget,
               );
       }
@@ -316,8 +289,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
             )
           : widget.webBarBuilder!(
               currentNavigationItem.title,
-          (currentNavigationItem.appBarTitleActions ?? []) +
-              (widget.appBarTitleActions ?? []),
+              (currentNavigationItem.appBarTitleActions ?? []) +
+                  (widget.appBarTitleActions ?? []),
               currentNavigationItem.appBarLeadingWidget,
               navItems,
               widget.onNavigationItemPressed,
