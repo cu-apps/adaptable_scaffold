@@ -1,4 +1,4 @@
-library adaptable_scaffold;
+library;
 
 import 'dart:math';
 
