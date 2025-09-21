@@ -3,16 +3,26 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class TabBarMorePage extends StatelessWidget {
-  const TabBarMorePage(this.navigationItems, this.numberOfTabsVisible,
-      this.onNavigationItemPressed, this.hideTabBar,
-      {super.key});
+  const TabBarMorePage(
+    this.navigationItems,
+    this.numberOfTabsVisible,
+    this.onNavigationItemPressed,
+    this.hideTabBar, {
+    super.key,
+  });
   final List<NavigationItem> navigationItems;
   final int numberOfTabsVisible;
   final Function(int)? onNavigationItemPressed;
   final Function hideTabBar;
 
-  Widget getMenuItem(Icon? leadingIcon, String title, Widget? pageToNavigateTo,
-      bool bodyShouldScroll, BuildContext context, int index) {
+  Widget getMenuItem(
+    Icon? leadingIcon,
+    String title,
+    Widget? pageToNavigateTo,
+    bool bodyShouldScroll,
+    BuildContext context,
+    int index,
+  ) {
     return Card(
       child: ListTile(
         leading: (leadingIcon?.icon != null) ? Icon(leadingIcon!.icon) : null,
@@ -66,15 +76,19 @@ class TabBarMorePage extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: SingleChildScrollView(
         child: Column(
-            children: navItemsToShow
-                .mapIndexed((index, element) => getMenuItem(
-                    element.icon,
-                    element.title,
-                    element.page,
-                    element.shouldScroll,
-                    context,
-                    index + numberOfTabsVisible))
-                .toList()),
+          children: navItemsToShow
+              .mapIndexed(
+                (index, element) => getMenuItem(
+                  element.icon,
+                  element.title,
+                  element.page,
+                  element.shouldScroll,
+                  context,
+                  index + numberOfTabsVisible,
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }
