@@ -10,26 +10,27 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class AdaptableScaffold extends StatefulWidget {
-  const AdaptableScaffold(
-      {this.pageIndex = 0,
-      this.onNavigationItemPressed,
-      this.navigationItems = const [],
-      this.bodyNavItem,
-      this.showNavOnlyOnWeb = false,
-      this.preferredWidth = 500,
-      this.maxContentWidth = 600,
-      this.webButtonWidth = 180,
-      this.largeViewWidthThreshold = 800,
-      this.appBarTitleActions,
-      this.webBodyLayoutBuilder,
-      required this.tabBarMoreBuilder,
-      this.webHeadingBuilder,
-      this.webButtonBuilder,
-      this.maxAppTabsVisible = 5,
-      this.appBarBuilder,
-      this.webBarBuilder,
-      this.overlayWidget,
-      super.key});
+  const AdaptableScaffold({
+    this.pageIndex = 0,
+    this.onNavigationItemPressed,
+    this.navigationItems = const [],
+    this.bodyNavItem,
+    this.showNavOnlyOnWeb = false,
+    this.preferredWidth = 500,
+    this.maxContentWidth = 600,
+    this.webButtonWidth = 180,
+    this.largeViewWidthThreshold = 800,
+    this.appBarTitleActions,
+    this.webBodyLayoutBuilder,
+    required this.tabBarMoreBuilder,
+    this.webHeadingBuilder,
+    this.webButtonBuilder,
+    this.maxAppTabsVisible = 5,
+    this.appBarBuilder,
+    this.webBarBuilder,
+    this.overlayWidget,
+    super.key,
+  });
 
   final int pageIndex;
   final Function(int)? onNavigationItemPressed;
@@ -44,39 +45,43 @@ class AdaptableScaffold extends StatefulWidget {
 
   // All navigation items, how many nav items are shown in standard view already, hideTabBarCallback, onNavigationItemPressed
   final Widget Function(List<NavigationItem>, int, Function, Function(int)?)
-      tabBarMoreBuilder;
+  tabBarMoreBuilder;
   final Widget Function(String)? webHeadingBuilder;
   // title, width
   final Widget Function(String, double)? webButtonBuilder;
 
   // navItem, overlayWidget, context, constraints, preferredWidth, headerBuilder, maxWidth, shouldShowAppStyleNav
   final Widget Function(
-      NavigationItem navItem,
-      Widget? overlayWidget,
-      BuildContext context,
-      BoxConstraints constraints,
-      double preferredWidth,
-      Widget Function(String) headerBuilder,
-      double maxWidth,
-      bool shouldShowAppStyleNav)? webBodyLayoutBuilder;
+    NavigationItem navItem,
+    Widget? overlayWidget,
+    BuildContext context,
+    BoxConstraints constraints,
+    double preferredWidth,
+    Widget Function(String) headerBuilder,
+    double maxWidth,
+    bool shouldShowAppStyleNav,
+  )?
+  webBodyLayoutBuilder;
   final int maxAppTabsVisible;
   final Widget? overlayWidget;
 
   // title, actions, leadingWidget
   final PreferredSizeWidget? Function(String, List<Widget>?, Widget?)?
-      appBarBuilder;
+  appBarBuilder;
 
   // title, actions, leadingWidget, navItems, navItemPressed, moreTabItemPressed, numberOfVisibleTabsChanged, buttonWidth, buttonBuilder
   final PreferredSizeWidget Function(
-      String,
-      List<Widget>?,
-      Widget?,
-      List<NavigationItem>,
-      Function(int)?,
-      Function,
-      Function(int)?,
-      double,
-      Widget Function(String, double))? webBarBuilder;
+    String,
+    List<Widget>?,
+    Widget?,
+    List<NavigationItem>,
+    Function(int)?,
+    Function,
+    Function(int)?,
+    double,
+    Widget Function(String, double),
+  )?
+  webBarBuilder;
 
   @override
   State<AdaptableScaffold> createState() => _AdaptableScaffoldState();
@@ -100,11 +105,16 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
               label: "More",
               title: "More",
               page: widget.tabBarMoreBuilder(
-                  widget.navigationItems, _numberOfTabsVisible, () {
-                setState(() {
-                  _shouldShowMorePage = false;
-                });
-              }, widget.onNavigationItemPressed))
+                widget.navigationItems,
+                _numberOfTabsVisible,
+                () {
+                  setState(() {
+                    _shouldShowMorePage = false;
+                  });
+                },
+                widget.onNavigationItemPressed,
+              ),
+            )
           : widget.navigationItems[widget.pageIndex];
     }
   }
@@ -120,78 +130,96 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      var shouldShowAppStyleNav =
-          _getShouldShowAppStyleNav(maxWidth: constraints.maxWidth);
-      if (shouldShowAppStyleNav) {
-        _numberOfTabsVisible = _getNumberOfAppTabsVisible();
-      }
-      return Scaffold(
-        appBar: _getAppBar(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        var shouldShowAppStyleNav = _getShouldShowAppStyleNav(
+          maxWidth: constraints.maxWidth,
+        );
+        if (shouldShowAppStyleNav) {
+          _numberOfTabsVisible = _getNumberOfAppTabsVisible();
+        }
+        return Scaffold(
+          appBar: _getAppBar(
             shouldShowAppStyleNav: shouldShowAppStyleNav,
             navItems: widget.navigationItems,
-            context: context),
-        body: _getBody(shouldShowAppStyleNav, context, constraints),
-        bottomNavigationBar: (shouldShowAppStyleNav &&
-                !widget.showNavOnlyOnWeb &&
-                widget.navigationItems.length > 1)
-            ? BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                currentIndex: (_shouldShowMorePage)
-                    ? widget.maxAppTabsVisible - 1
-                    : min(widget.pageIndex, widget.maxAppTabsVisible - 1),
-                selectedItemColor: Theme.of(context).primaryColor,
-                items: _getBottomNavigationBarItems(),
-                onTap: (index) {
-                  if (_getBottomNavigationBarItems()[index].label == "More") {
-                    setState(() {
-                      _shouldShowMorePage = true;
-                    });
-                  } else {
-                    setState(() {
-                      _shouldShowMorePage = false;
-                    });
-                    widget.onNavigationItemPressed?.call(index);
-                    if (widget.navigationItems[index].page != null) {
-                      Navigator.popUntil(context, (route) => route.isFirst);
+            context: context,
+          ),
+          body: _getBody(shouldShowAppStyleNav, context, constraints),
+          bottomNavigationBar:
+              (shouldShowAppStyleNav &&
+                  !widget.showNavOnlyOnWeb &&
+                  widget.navigationItems.length > 1)
+              ? BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  currentIndex: (_shouldShowMorePage)
+                      ? widget.maxAppTabsVisible - 1
+                      : min(widget.pageIndex, widget.maxAppTabsVisible - 1),
+                  selectedItemColor: Theme.of(context).primaryColor,
+                  items: _getBottomNavigationBarItems(),
+                  onTap: (index) {
+                    if (_getBottomNavigationBarItems()[index].label == "More") {
+                      setState(() {
+                        _shouldShowMorePage = true;
+                      });
+                    } else {
+                      setState(() {
+                        _shouldShowMorePage = false;
+                      });
+                      widget.onNavigationItemPressed?.call(index);
+                      if (widget.navigationItems[index].page != null) {
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                      }
                     }
-                  }
-                })
-            : null,
-      );
-    });
+                  },
+                )
+              : null,
+        );
+      },
+    );
   }
 
   List<NavigationItem> _getTabBarNavItems() {
     if (widget.navigationItems.length <= widget.maxAppTabsVisible) {
       return widget.navigationItems;
     } else {
-      var listItems =
-          widget.navigationItems.sublist(0, widget.maxAppTabsVisible - 1);
-      listItems.add(NavigationItem(
+      var listItems = widget.navigationItems.sublist(
+        0,
+        widget.maxAppTabsVisible - 1,
+      );
+      listItems.add(
+        NavigationItem(
           icon: const Icon(Icons.more_horiz),
           label: 'More',
           title: 'More',
           badgeCounter: widget.navigationItems
               .sublist(widget.maxAppTabsVisible)
-              .fold(0,
-                  (sum, element) => (sum ?? 0) + (element.badgeCounter ?? 0))));
+              .fold(
+                0,
+                (sum, element) => (sum ?? 0) + (element.badgeCounter ?? 0),
+              ),
+        ),
+      );
       return listItems;
     }
   }
 
   List<BottomNavigationBarItem> _getBottomNavigationBarItems() {
     return _getTabBarNavItems()
-        .map((e) => BottomNavigationBarItem(
+        .map(
+          (e) => BottomNavigationBarItem(
             icon: e.badgeCounter != null && e.badgeCounter != 0
                 ? Badge.count(count: e.badgeCounter!, child: e.icon)
                 : e.icon!,
-            label: e.label))
+            label: e.label,
+          ),
+        )
         .toList();
   }
 
-  Widget _getBody(bool shouldShowAppStyleNav, BuildContext context,
-      BoxConstraints constraints) {
+  Widget _getBody(
+    bool shouldShowAppStyleNav,
+    BuildContext context,
+    BoxConstraints constraints,
+  ) {
     return shouldShowAppStyleNav
         ? _getAppBody(context)
         : _getWebBody(context, shouldShowAppStyleNav, constraints);
@@ -207,9 +235,12 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
     );
 
     if (currentNavigationItem.shouldScroll) {
-      return _getBodyWithOverlay(Align(
+      return _getBodyWithOverlay(
+        Align(
           alignment: Alignment.topCenter,
-          child: SingleChildScrollView(child: bodyWithKeyboardDismissal)));
+          child: SingleChildScrollView(child: bodyWithKeyboardDismissal),
+        ),
+      );
     } else {
       return _getBodyWithOverlay(bodyWithKeyboardDismissal);
     }
@@ -221,8 +252,11 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
         : Stack(children: [body, widget.overlayWidget!]);
   }
 
-  Widget _getWebBody(BuildContext context, bool shouldShowAppStyleNav,
-      BoxConstraints constraints) {
+  Widget _getWebBody(
+    BuildContext context,
+    bool shouldShowAppStyleNav,
+    BoxConstraints constraints,
+  ) {
     return (widget.webBodyLayoutBuilder == null)
         ? DefaultWebBody(
             navItem: currentNavigationItem,
@@ -230,7 +264,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
             maxWidth: widget.maxContentWidth,
             shouldShowAppStyleNav: shouldShowAppStyleNav,
             headerBuilder: widget.webHeadingBuilder,
-            preferredWidth: widget.preferredWidth)
+            preferredWidth: widget.preferredWidth,
+          )
         : widget.webBodyLayoutBuilder!(
             currentNavigationItem,
             widget.overlayWidget,
@@ -240,13 +275,15 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
             widget.webHeadingBuilder ??
                 (title) => Text(title, style: const TextStyle(fontSize: 50)),
             widget.maxContentWidth,
-            shouldShowAppStyleNav);
+            shouldShowAppStyleNav,
+          );
   }
 
-  PreferredSizeWidget? _getAppBar(
-      {required bool shouldShowAppStyleNav,
-      required List<NavigationItem> navItems,
-      required BuildContext context}) {
+  PreferredSizeWidget? _getAppBar({
+    required bool shouldShowAppStyleNav,
+    required List<NavigationItem> navItems,
+    required BuildContext context,
+  }) {
     if (shouldShowAppStyleNav) {
       if (currentNavigationItem.isFullScreen) {
         return null;
@@ -254,9 +291,11 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
         return (widget.appBarBuilder == null)
             ? DefaultAppStyleBar(
                 title: currentNavigationItem.title,
-                actions: (currentNavigationItem.appBarTitleActions ?? []) +
+                actions:
+                    (currentNavigationItem.appBarTitleActions ?? []) +
                     (widget.appBarTitleActions ?? []),
-                leadingWidget: currentNavigationItem.appBarLeadingWidget)
+                leadingWidget: currentNavigationItem.appBarLeadingWidget,
+              )
             : widget.appBarBuilder!(
                 currentNavigationItem.title,
                 (currentNavigationItem.appBarTitleActions ?? []) +
@@ -271,7 +310,8 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
       return (widget.webBarBuilder == null)
           ? DefaultWebStyleBar(
               title: currentNavigationItem.title,
-              actions: (currentNavigationItem.appBarTitleActions ?? []) +
+              actions:
+                  (currentNavigationItem.appBarTitleActions ?? []) +
                   (widget.appBarTitleActions ?? []),
               buttonWidth: widget.webButtonWidth,
               navigationItems: navItems,
@@ -299,13 +339,13 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
               widget.webButtonWidth,
               widget.webButtonBuilder ??
                   (title, buttonWidth) => DefaultWebBarButton(
-                        padding: const EdgeInsets.all(10),
-                        fixedWidth: buttonWidth,
-                        title: title,
-                        textColor: Colors.grey[800],
-                        hoverColor:
-                            Theme.of(context).primaryColor.withAlpha(25),
-                      ));
+                    padding: const EdgeInsets.all(10),
+                    fixedWidth: buttonWidth,
+                    title: title,
+                    textColor: Colors.grey[800],
+                    hoverColor: Theme.of(context).primaryColor.withAlpha(25),
+                  ),
+            );
     }
   }
 
@@ -321,17 +361,18 @@ class _AdaptableScaffoldState extends State<AdaptableScaffold> {
 }
 
 class NavigationItem {
-  NavigationItem(
-      {this.icon,
-      this.label,
-      required this.title,
-      this.page,
-      this.urlToOpen,
-      this.shouldScroll = true,
-      this.isFullScreen = false,
-      this.badgeCounter,
-      this.appBarTitleActions,
-      this.appBarLeadingWidget});
+  NavigationItem({
+    this.icon,
+    this.label,
+    required this.title,
+    this.page,
+    this.urlToOpen,
+    this.shouldScroll = true,
+    this.isFullScreen = false,
+    this.badgeCounter,
+    this.appBarTitleActions,
+    this.appBarLeadingWidget,
+  });
   final Icon? icon;
   final String? label;
   final String title;

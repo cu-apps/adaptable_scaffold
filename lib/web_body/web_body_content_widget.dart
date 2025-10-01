@@ -2,13 +2,14 @@ import 'package:adaptable_scaffold/adaptable_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class WebBodyContentWidget extends StatelessWidget {
-  const WebBodyContentWidget(
-      {required this.navItem,
-      this.overlayWidget,
-      required this.maxWidth,
-      required this.shouldShowAppStyleNav,
-      this.headerBuilder,
-      super.key});
+  const WebBodyContentWidget({
+    required this.navItem,
+    this.overlayWidget,
+    required this.maxWidth,
+    required this.shouldShowAppStyleNav,
+    this.headerBuilder,
+    super.key,
+  });
 
   final NavigationItem navItem;
   final Widget? overlayWidget;
@@ -19,37 +20,44 @@ class WebBodyContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      Widget page = navItem.page ?? Container();
-      Widget column = ConstrainedBox(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        Widget page = navItem.page ?? Container();
+        Widget column = ConstrainedBox(
           constraints: BoxConstraints(maxWidth: maxWidth),
           child: Column(
             children: [
               _getHeader(),
-              (navItem.shouldScroll) ? page : Expanded(child: page)
+              (navItem.shouldScroll) ? page : Expanded(child: page),
             ],
-          ));
-      Widget bodyBackground;
-      if (navItem.shouldScroll) {
-        bodyBackground = Align(
-            alignment: Alignment.topCenter,
-            child: SingleChildScrollView(child: column));
-      } else {
-        if (navItem.isFullScreen) {
+          ),
+        );
+        Widget bodyBackground;
+        if (navItem.shouldScroll) {
           bodyBackground = Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(child: column),
+          );
+        } else {
+          if (navItem.isFullScreen) {
+            bodyBackground = Align(
               alignment: Alignment.topCenter,
               child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: navItem.page ?? Container()));
-        } else {
-          bodyBackground = Align(alignment: Alignment.topCenter, child: column);
+                constraints: BoxConstraints(maxWidth: maxWidth),
+                child: navItem.page ?? Container(),
+              ),
+            );
+          } else {
+            bodyBackground = Align(
+              alignment: Alignment.topCenter,
+              child: column,
+            );
+          }
         }
-      }
-      return Stack(children: [
-        bodyBackground,
-        if (overlayWidget != null) overlayWidget!,
-      ]);
-    });
+        return Stack(
+          children: [bodyBackground, if (overlayWidget != null) overlayWidget!],
+        );
+      },
+    );
   }
 
   Widget _getHeader() {
@@ -81,7 +89,9 @@ class DefaultWebBodyPageHeader extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-            fontSize: fontSize, color: Theme.of(context).primaryColor),
+          fontSize: fontSize,
+          color: Theme.of(context).primaryColor,
+        ),
         textAlign: TextAlign.center,
       ),
     );

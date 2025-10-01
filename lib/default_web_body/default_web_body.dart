@@ -3,14 +3,15 @@ import 'package:adaptable_scaffold/web_body/web_body_content_widget.dart';
 import 'package:flutter/material.dart';
 
 class DefaultWebBody extends StatelessWidget {
-  const DefaultWebBody(
-      {required this.navItem,
-      this.overlayWidget,
-      required this.maxWidth,
-      required this.shouldShowAppStyleNav,
-      this.headerBuilder,
-      required this.preferredWidth,
-      super.key});
+  const DefaultWebBody({
+    required this.navItem,
+    this.overlayWidget,
+    required this.maxWidth,
+    required this.shouldShowAppStyleNav,
+    this.headerBuilder,
+    required this.preferredWidth,
+    super.key,
+  });
 
   final NavigationItem navItem;
   final Widget? overlayWidget;
@@ -30,14 +31,15 @@ class DefaultWebBody extends StatelessWidget {
             children: [
               Expanded(flex: 1, child: Container()),
               Expanded(
-                  flex: 2,
-                  child: WebBodyContentWidget(
-                    navItem: navItem,
-                    overlayWidget: overlayWidget,
-                    maxWidth: maxWidth,
-                    shouldShowAppStyleNav: shouldShowAppStyleNav,
-                    headerBuilder: headerBuilder,
-                  )),
+                flex: 2,
+                child: WebBodyContentWidget(
+                  navItem: navItem,
+                  overlayWidget: overlayWidget,
+                  maxWidth: maxWidth,
+                  shouldShowAppStyleNav: shouldShowAppStyleNav,
+                  headerBuilder: headerBuilder,
+                ),
+              ),
               Expanded(flex: 1, child: Container()),
             ],
           );
